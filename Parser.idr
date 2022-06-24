@@ -49,15 +49,15 @@ parse' : List Char -> List RInstr
 parse' (' '::' '::xs) = case parseNum xs of
                            (num, rest) => RStk (RPUSH num) :: parse' rest
 parse' (' '::'\n'::' '::xs) = RStk RDUP :: parse' xs
-parse' (' '::'\t'::' '::xs) 
+parse' (' '::'\t'::' '::xs)
                       = case parseNum xs of
-                           (num, rest) => 
+                           (num, rest) =>
                               RStk (RCOPY (fromInteger num)) :: parse' rest
 parse' (' '::'\n'::'\t'::xs) = RStk RSWAP :: parse' xs
 parse' (' '::'\n'::'\n'::xs) = RStk RDISCARD :: parse' xs
-parse' (' '::'\t'::'\n'::xs) 
+parse' (' '::'\t'::'\n'::xs)
                       = case parseNum xs of
-                           (num, rest) => 
+                           (num, rest) =>
                               RStk (RSLIDE (fromInteger num)) :: parse' rest
 
 parse' ('\t'::' '::' '::' '::xs) = RAr RADD :: parse' xs
@@ -69,19 +69,19 @@ parse' ('\t'::' '::'\t'::'\t'::xs) = RAr RMOD :: parse' xs
 parse' ('\t'::'\t'::' '::xs) = RHp RSTORE :: parse' xs
 parse' ('\t'::'\t'::'\t'::xs) = RHp RRETRIEVE :: parse' xs
 
-parse' ('\n'::' '::' '::xs) 
+parse' ('\n'::' '::' '::xs)
     = case parseLbl xs of
            (lbl, rest) => RFl (RLABEL lbl) :: parse' rest
-parse' ('\n'::' '::'\t'::xs) 
+parse' ('\n'::' '::'\t'::xs)
     = case parseLbl xs of
            (lbl, rest) => RFl (RCALL lbl) :: parse' rest
-parse' ('\n'::' '::'\n'::xs) 
+parse' ('\n'::' '::'\n'::xs)
     = case parseLbl xs of
            (lbl, rest) => RFl (RJUMP lbl) :: parse' rest
-parse' ('\n'::'\t'::' '::xs) 
+parse' ('\n'::'\t'::' '::xs)
     = case parseLbl xs of
            (lbl, rest) => RFl (RJZ lbl) :: parse' rest
-parse' ('\n'::'\t'::'\t'::xs) 
+parse' ('\n'::'\t'::'\t'::xs)
     = case parseLbl xs of
            (lbl, rest) => RFl (RJNEG lbl) :: parse' rest
 parse' ('\n'::'\t'::'\n'::xs) = RFl RRETURN :: parse' xs
@@ -107,6 +107,3 @@ dumpInput _ _ = ""
 
 parse : String -> List RInstr
 parse x = parse' (filter isSpace (unpack x))
-
-
-

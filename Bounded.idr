@@ -2,7 +2,7 @@ module Bounded
 
 import Data.Vect
 
--- Various operations on bounded natural numbers 
+-- Various operations on bounded natural numbers
 --  * vector lookup
 --  * increase/decrease bounds
 --  * checked addition/increment
@@ -92,4 +92,3 @@ Bounded.strengthenZK = proof {
   exact x;
   exact k;
 }
-

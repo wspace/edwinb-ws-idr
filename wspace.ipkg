@@ -3,4 +3,3 @@ package wspace
 modules = Bounded, Interp, Parser, NatCmp, Lang, RawLang, CheckLang, Main
 main = Main
 executable = wspace
-

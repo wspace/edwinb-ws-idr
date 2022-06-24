@@ -28,7 +28,7 @@ data HeapInst : Nat -> Nat -> Nat -> Type where
 -- For flow control, have to assume nothing on the stack at target of
 -- a label
 data FlowInst : Nat -> Nat -> Nat -> Type where
-     LABEL  : Bounded lbls -> FlowInst x Z lbls 
+     LABEL  : Bounded lbls -> FlowInst x Z lbls
      CALL   : Bounded lbls -> FlowInst x Z lbls
      JUMP   : Bounded lbls -> FlowInst x Z lbls
      JZ     : Bounded lbls -> FlowInst (S x) x lbls
@@ -56,7 +56,7 @@ data Prog : Nat -> Nat -> Nat -> Type where
 
 data Program = MkProg (Prog Z e Z)
 
--- testProg : Program 
+-- testProg : Program
 -- testProg = MkProg [Check (S O) (Stk DUP),
 --                    Ar ADD,
 --                    IOi OUTPUTNUM,
@@ -67,7 +67,7 @@ namespace Stack
     -- but may have more
     data Stack : Nat -> Type where
          Nil   : Stack Z
-         (::)  : Integer -> Stack k -> Stack (S k) 
+         (::)  : Integer -> Stack k -> Stack (S k)
          Unchecked : Stack k -> Stack Z
 
 total
@@ -108,4 +108,3 @@ setHeap (MkMachine p l s _ c) h = MkMachine p l s h c
 
 setCallStack : Machine lbls -> List (CallStackEntry lbls) -> Machine lbls
 setCallStack (MkMachine p l s h _) c = MkMachine p l s h c
-

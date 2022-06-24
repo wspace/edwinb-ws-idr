@@ -19,7 +19,7 @@ doCheck (x :: xs) (S k) with (doCheck xs k)
 doCheck (x :: xs) Z = Just (Unchecked (x :: xs))
 doCheck (Unchecked stk) n = doCheck stk n
 
-drop : Stack (i + k) -> Stack k 
+drop : Stack (i + k) -> Stack k
 drop {i = Z}   stk        = stk
 drop {i = S k} (x :: stk) = drop stk
 
@@ -46,7 +46,7 @@ interpStk SWAP      (x :: y :: stk) = return (y :: x :: stk)
 interpStk DISCARD   (x :: stk) = return stk
 interpStk (SLIDE n) (x :: stk) = return (x :: drop stk)
 
-interpArith : ArithInst stkIn stkOut l -> Stack stkIn -> 
+interpArith : ArithInst stkIn stkOut l -> Stack stkIn ->
               IO (Stack stkOut)
 interpArith ADD (x :: y :: stk) = return (y + x :: stk)
 interpArith SUB (x :: y :: stk) = return (y - x :: stk)
@@ -61,33 +61,33 @@ interpHeap STORE (val :: addr :: stk) hp
 interpHeap RETRIEVE (addr :: stk) hp
     = return (getHeap addr hp :: stk, hp)
 
-interpFlow : FlowInst stkIn stkOut l -> 
+interpFlow : FlowInst stkIn stkOut l ->
              Prog stkOut stkOut' l ->
              LabelCache l ->
              Stack stkIn ->
              List Integer ->
-             List (CallStackEntry l) -> 
+             List (CallStackEntry l) ->
              IO (Maybe (Machine l))
 interpFlow (LABEL x) next lblcache stk hp cs
     = return (Just (MkMachine next lblcache (Unchecked stk) hp cs))
-interpFlow (CALL x) ret lblcache stk hp cs 
+interpFlow (CALL x) ret lblcache stk hp cs
     = return (Just (MkMachine (getProof (lookup x lblcache)) lblcache
                               (Unchecked stk) hp (CSE ret :: cs)))
-interpFlow (JUMP x) ret lblcache stk hp cs 
+interpFlow (JUMP x) ret lblcache stk hp cs
     = return (Just (MkMachine (getProof (lookup x lblcache)) lblcache
                               (Unchecked stk) hp cs))
-interpFlow (JZ x) next lblcache (0 :: stk) hp cs 
-    = return (Just (MkMachine (getProof (lookup x lblcache)) lblcache 
+interpFlow (JZ x) next lblcache (0 :: stk) hp cs
+    = return (Just (MkMachine (getProof (lookup x lblcache)) lblcache
                               (Unchecked stk) hp cs))
-interpFlow (JZ x) next lblcache (_ :: stk) hp cs 
+interpFlow (JZ x) next lblcache (_ :: stk) hp cs
     = return (Just (MkMachine next lblcache stk hp cs))
-interpFlow (JNEG x) next lblcache (val :: stk) hp cs 
+interpFlow (JNEG x) next lblcache (val :: stk) hp cs
     = if (val < 0)
-         then return (Just (MkMachine (getProof (lookup x lblcache)) lblcache 
+         then return (Just (MkMachine (getProof (lookup x lblcache)) lblcache
                            (Unchecked stk) hp cs))
          else return (Just (MkMachine next lblcache stk hp cs))
 interpFlow RETURN _ lblcache stk hp (CSE c :: cs)
-    = return (Just (MkMachine c lblcache (Unchecked stk) hp cs)) 
+    = return (Just (MkMachine c lblcache (Unchecked stk) hp cs))
 interpFlow RETURN _ lblcache stk hp []
     = do putStrLn "Call stack empty"
          return Nothing
@@ -96,7 +96,7 @@ interpFlow END _ lblcache stk hp cs
 
 interpIO : IOInst stkIn stkOut l -> Stack stkIn -> List Integer ->
            IO (Stack stkOut, List Integer)
-interpIO OUTPUT (x :: stk) hp 
+interpIO OUTPUT (x :: stk) hp
      = do let c : Char = cast (prim__truncBigInt_Int x)
           putChar c
           return (stk, hp)
@@ -113,28 +113,28 @@ interpIO READNUM (addr :: stk) hp
           return (stk, setHeap (cast x) addr hp)
 
 interpInst : Machine l -> IO (Maybe (Machine l))
-interpInst (MkMachine (Lang.Nil) l s h c) 
+interpInst (MkMachine (Lang.Nil) l s h c)
      = do putStrLn "Finished"
           return Nothing
-interpInst (MkMachine (Fl END :: prog) l s h c) 
+interpInst (MkMachine (Fl END :: prog) l s h c)
      = do putStrLn "Finished"
           return Nothing
-interpInst (MkMachine (Check x' i :: prog) l s h c) 
+interpInst (MkMachine (Check x' i :: prog) l s h c)
     with (doCheck s x')
          | Just stk' = interpInst (MkMachine (i :: prog) l stk' h c)
          | Nothing   = do putStrLn ("Stack empty, need " ++ show x')
                           return Nothing
-interpInst (MkMachine (Stk i :: prog) l s h c) 
-     = do stk' <- interpStk i s 
+interpInst (MkMachine (Stk i :: prog) l s h c)
+     = do stk' <- interpStk i s
           return (Just (MkMachine prog l stk' h c))
 interpInst (MkMachine (Ar i :: prog) l s h c)
-     = do stk' <- interpArith i s 
+     = do stk' <- interpArith i s
           return (Just (MkMachine prog l stk' h c))
 interpInst (MkMachine (Hp i :: prog) l s h c)
      = do (stk', hp') <- interpHeap i s h
           return (Just (MkMachine prog l stk' hp' c))
 interpInst (MkMachine (Fl i :: prog) l s h c)
-     = interpFlow i prog l s h c 
+     = interpFlow i prog l s h c
 interpInst (MkMachine (IOi i :: prog) l s h c)
      = do (stk', hp') <- interpIO i s h
           return (Just (MkMachine prog l stk' hp' c))
@@ -144,6 +144,3 @@ loop m = do x' <- interpInst m
             case x' of
                  Just m' => loop m'
                  _ => return ()
-
-
-

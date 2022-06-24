@@ -9,8 +9,8 @@ import Interp
 import System
 import Debug.Trace
 
-testProg : List RInstr 
-testProg = [RFl (RLABEL "Start"), 
+testProg : List RInstr
+testProg = [RFl (RLABEL "Start"),
                   RIOi RREADNUM,
                   RStk (RPUSH 10),
                   RFl (RCALL "addup"),
@@ -19,8 +19,8 @@ testProg = [RFl (RLABEL "Start"),
                   RFl (RLABEL "addup"),
                   RAr RADD,
                   RFl RRETURN]
-                
-{-                
+
+{-
 dumpI : Instr x y l -> String
 dumpI (Stk (PUSH n)) = "PUSH " ++ show n
 dumpI (Stk DUP) = "DUP"
@@ -119,7 +119,7 @@ main = do xs <- getArgs
                                                    "(" ++ show err ++ ")")
                       let raw = parse src
                       case check raw of
-                           Just (_ ** m) => do -- putStrLn (dump (program m)) 
+                           Just (_ ** m) => do -- putStrLn (dump (program m))
                                                loop m
                                                -- gcInfo
                            Nothing => putStrLn "FAIL"
