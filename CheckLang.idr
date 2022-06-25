@@ -63,19 +63,19 @@ findLoc x (y :: ys)
 checkFlow : Vect lbls Label -> RFlowInst -> (stkIn : Nat) ->
             Maybe (stkOut ** Instr stkIn stkOut lbls)
 checkFlow ls (RLABEL l) s = do bindex <- findLoc l ls
-                               return (_ ** Fl (LABEL bindex))
+                               pure (_ ** Fl (LABEL bindex))
 checkFlow ls (RCALL l)  s = do bindex <- findLoc l ls
-                               return (_ ** Fl (CALL bindex))
+                               pure (_ ** Fl (CALL bindex))
 checkFlow ls (RJUMP l)  s = do bindex <- findLoc l ls
-                               return (_ ** Fl (JUMP bindex))
+                               pure (_ ** Fl (JUMP bindex))
 checkFlow ls (RJZ l)    (S s) = do bindex <- findLoc l ls
-                                   return (_ ** Fl (JZ bindex))
+                                   pure (_ ** Fl (JZ bindex))
 checkFlow ls (RJZ l)    s     = do bindex <- findLoc l ls
-                                   return (_ ** Check 1 (Fl (JZ bindex)))
+                                   pure (_ ** Check 1 (Fl (JZ bindex)))
 checkFlow ls (RJNEG l)  (S s) = do bindex <- findLoc l ls
-                                   return (_ ** Fl (JNEG bindex))
+                                   pure (_ ** Fl (JNEG bindex))
 checkFlow ls (RJNEG l)  s     = do bindex <- findLoc l ls
-                                   return (_ ** Check 1 (Fl (JNEG bindex)))
+                                   pure (_ ** Check 1 (Fl (JNEG bindex)))
 checkFlow ls RRETURN    s = Just (_ ** Fl RETURN)
 checkFlow ls REND       s = Just (_ ** Fl END)
 
@@ -106,11 +106,11 @@ mkLabels (_ :: xs) = mkLabels xs
 
 check' : Vect lbls Label -> List RInstr -> (stkIn : Nat) ->
          Maybe (stkOut ** Prog stkIn stkOut lbls)
-check' ls []        stk = return (_ ** [])
+check' ls []        stk = pure (_ ** [])
 check' ls (i :: is) stk
       = do (stk' ** i') <- checkI ls i stk
            (stk'' ** is') <- check' ls is stk'
-           return (stk'' ** i' :: is')
+           pure (stk'' ** i' :: is')
 
 findLabels : Prog x y lbls -> LabelCache lbls
 findLabels {lbls} prog = updateLabels blank prog
@@ -131,7 +131,7 @@ check : List RInstr -> Maybe (l ** Machine l)
 check raw = do let (_ ** lbls) = mkLabels raw
                (_ ** prog) <- check' lbls raw Z
                let lblcode = findLabels prog
-               return (_ ** MkMachine prog lblcode [] [] [])
+               pure (_ ** MkMachine prog lblcode [] [] [])
 
 ---------- Proofs ----------
 

@@ -17,7 +17,7 @@ data Bounded : Nat -> Type where
      Bound : (k : Nat) -> Bounded (plus (S k) n)
 
 export
-instance Show (Bounded n) where
+implementation Show (Bounded n) where
      show = show' where
         show' : Bounded n' -> String
         show' (Bound k) = show k
