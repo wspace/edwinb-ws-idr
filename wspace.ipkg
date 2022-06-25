@@ -1,6 +1,6 @@
 package wspace
 
-modules = Bounded, Interp, Parser, NatCmp, Lang, RawLang, CheckLang, Main
+modules = Bounded, Interp, Parser, Lang, RawLang, CheckLang, Main
 main = Main
 opts = "--no-tactic-deprecation-warnings"
 executable = wspace

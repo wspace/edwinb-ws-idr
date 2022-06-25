@@ -4,7 +4,6 @@ import Data.Vect
 
 import Lang
 import RawLang
-import NatCmp
 import Bounded
 
 checkStk : RStackInst -> (stkIn : Nat) -> (stkOut ** Instr stkIn stkOut l)

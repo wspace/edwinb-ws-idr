@@ -1,6 +1,5 @@
 module RawLang
 
-import NatCmp
 import Bounded
 
 public export

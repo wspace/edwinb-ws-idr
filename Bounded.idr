@@ -7,8 +7,6 @@ import Data.Vect
 --  * increase/decrease bounds
 --  * checked addition/increment
 
--- import NatCmp
-
 %default total
 
 -- | Bounded natural numbers
