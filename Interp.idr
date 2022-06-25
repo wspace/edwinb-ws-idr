@@ -139,6 +139,7 @@ interpInst (MkMachine (IOi i :: prog) l s h c)
      = do (stk', hp') <- interpIO i s h
           return (Just (MkMachine prog l stk' hp' c))
 
+export
 loop : Machine l -> IO ()
 loop m = do x' <- interpInst m
             case x' of

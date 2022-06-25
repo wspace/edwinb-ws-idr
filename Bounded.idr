@@ -12,21 +12,26 @@ import Data.Vect
 %default total
 
 -- | Bounded natural numbers
+public export
 data Bounded : Nat -> Type where
      Bound : (k : Nat) -> Bounded (plus (S k) n)
 
+export
 instance Show (Bounded n) where
      show = show' where
         show' : Bounded n' -> String
         show' (Bound k) = show k
 
+export
 mkBounded : (k : Nat) -> Bounded (plus k (S n))
 mkBounded {n} k ?= Bound {n} k
 
+export
 lookup : Bounded n -> Vect n a -> a
 lookup (Bound Z)     (x :: xs) = x
 lookup (Bound (S k)) (x :: xs) = lookup (Bound k) xs
 
+export
 update : Bounded n -> a -> Vect n a -> Vect n a
 update (Bound Z)     val (x :: xs) = val :: xs
 update (Bound (S k)) val (x :: xs) = x :: update (Bound k) val xs
@@ -53,6 +58,7 @@ inBound x b with (cmp x b)
   plusB : Bounded x -> Bounded y -> (x = y) -> Maybe (Bounded x)
   plusB (Bound a) (Bound b) p = inBound (a + b) _
 
+export
 inc : Bounded n -> Bounded (S n)
 inc (Bound x) = Bound (S x)
 

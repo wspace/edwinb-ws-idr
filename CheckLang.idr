@@ -126,6 +126,7 @@ findLabels {lbls} prog = updateLabels blank prog
     updateLabels ls (_ :: prog) = updateLabels ls prog
 
 
+export
 check : List RInstr -> Maybe (l ** Machine l)
 check raw = do let (_ ** lbls) = mkLabels raw
                (_ ** prog) <- check' lbls raw Z

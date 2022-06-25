@@ -105,5 +105,6 @@ dumpInput Z xs = "\n" ++ dumpInput 16 xs
 dumpInput (S k) (x :: xs) = dumpChar x ++ dumpInput k xs
 dumpInput _ _ = ""
 
+export
 parse : String -> List RInstr
 parse x = parse' (filter isSpace (unpack x))

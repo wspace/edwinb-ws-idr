@@ -6,6 +6,7 @@ import NatCmp
 import Bounded
 import RawLang
 
+public export
 data StackInst : Nat -> Nat -> Nat -> Type where
      PUSH : Integer -> StackInst x (S x) lbls
      DUP  : StackInst (S x) (S (S x)) lbls
@@ -14,6 +15,7 @@ data StackInst : Nat -> Nat -> Nat -> Type where
      DISCARD : StackInst (S x) x lbls
      SLIDE : (x : Nat) -> StackInst (S (plus x k)) (S k) lbls
 
+public export
 data ArithInst : Nat -> Nat -> Nat -> Type where
      ADD : ArithInst (S (S x)) (S x) lbls
      SUB : ArithInst (S (S x)) (S x) lbls
@@ -21,12 +23,14 @@ data ArithInst : Nat -> Nat -> Nat -> Type where
      DIV : ArithInst (S (S x)) (S x) lbls
      MOD : ArithInst (S (S x)) (S x) lbls
 
+public export
 data HeapInst : Nat -> Nat -> Nat -> Type where
      STORE    : HeapInst (S (S x)) x lbls
      RETRIEVE : HeapInst (S x) (S x) lbls
 
 -- For flow control, have to assume nothing on the stack at target of
 -- a label
+public export
 data FlowInst : Nat -> Nat -> Nat -> Type where
      LABEL  : Bounded lbls -> FlowInst x Z lbls
      CALL   : Bounded lbls -> FlowInst x Z lbls
@@ -36,12 +40,14 @@ data FlowInst : Nat -> Nat -> Nat -> Type where
      RETURN : FlowInst x Z lbls
      END    : FlowInst x x lbls
 
+public export
 data IOInst : Nat -> Nat -> Nat -> Type where
      OUTPUT    : IOInst (S x) x lbls
      OUTPUTNUM : IOInst (S x) x lbls
      READCHAR  : IOInst (S x) x lbls
      READNUM   : IOInst (S x) x lbls
 
+public export
 data Instr : Nat -> Nat -> Nat -> Type where
      Stk   : StackInst x y lbls -> Instr x y lbls
      Ar    : ArithInst x y lbls -> Instr x y lbls
@@ -50,6 +56,7 @@ data Instr : Nat -> Nat -> Nat -> Type where
      IOi   : IOInst x y lbls -> Instr x y lbls
      Check : (x' : Nat) -> Instr x' y lbls -> Instr x y lbls
 
+public export
 data Prog : Nat -> Nat -> Nat -> Type where
      Nil  : Prog x x lbls
      (::) : Instr x y lbls -> Prog y z lbls -> Prog x z lbls
@@ -65,22 +72,27 @@ data Program = MkProg (Prog Z e Z)
 namespace Stack
     -- | A Stack n is a stack which has at least n things in it,
     -- but may have more
+    public export
     data Stack : Nat -> Type where
          Nil   : Stack Z
          (::)  : Integer -> Stack k -> Stack (S k)
          Unchecked : Stack k -> Stack Z
 
 total
+export
 lookup : Bounded n -> Stack n -> Integer
 lookup (Bound Z)     (x :: xs) = x
 lookup (Bound (S k)) (x :: xs) = lookup (Bound k) xs
 
+public export
 data CallStackEntry : Nat -> Type where
      CSE : Prog Z y lbls -> CallStackEntry lbls
 
+public export
 LabelCache : Nat -> Type
 LabelCache n = Vect n (out ** Prog Z out n)
 
+public export
 data Machine : Nat -> Type where
      MkMachine : (program : Prog x y lbls) ->
                  (lblcache : LabelCache lbls) ->
